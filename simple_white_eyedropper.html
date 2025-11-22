@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>White Point Auto-Correct (GIMP-style)</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    .container { display: flex; gap: 2em; }
+    .column { display: flex; flex-direction: column; align-items: center; }
+    canvas { border: 1px solid #ccc; margin-top: 1em; cursor: crosshair; }
+    #download { margin-top: 1em; }
+  </style>
+</head>
+<body>
+  <h2>White Point Auto-Correct (GIMP-style)</h2>
+  <p>Upload an image, then click an area that should be white.</p>
+  <div class="container">
+    <div class="column">
+      <label for="imageInput">Original Image</label>
+      <input type="file" id="imageInput" accept="image/*">
+      <canvas id="inputCanvas"></canvas>
+    </div>
+    <div class="column">
+      <label>Corrected Image</label>
+      <canvas id="outputCanvas"></canvas>
+      <button id="download" disabled>Download Corrected Image</button>
+    </div>
+  </div>
+  <script>
+    const imageInput = document.getElementById('imageInput');
+    const inputCanvas = document.getElementById('inputCanvas');
+    const outputCanvas = document.getElementById('outputCanvas');
+    const downloadBtn = document.getElementById('download');
+    let originalImage = null;
+    let correctedImageData = null;
+
+    imageInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const img = new Image();
+      img.onload = () => {
+        inputCanvas.width = img.width;
+        inputCanvas.height = img.height;
+        outputCanvas.width = img.width;
+        outputCanvas.height = img.height;
+        const ctx = inputCanvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        originalImage = ctx.getImageData(0, 0, img.width, img.height);
+        // Clear output
+        outputCanvas.getContext('2d').clearRect(0, 0, outputCanvas.width, outputCanvas.height);
+        downloadBtn.disabled = true;
+      };
+      img.src = URL.createObjectURL(file);
+    });
+
+    inputCanvas.addEventListener('click', (e) => {
+      if (!originalImage) return;
+      const rect = inputCanvas.getBoundingClientRect();
+      const x = Math.floor((e.clientX - rect.left) * (inputCanvas.width / rect.width));
+      const y = Math.floor((e.clientY - rect.top) * (inputCanvas.height / rect.height));
+      const idx = (y * originalImage.width + x) * 4;
+      const r = originalImage.data[idx];
+      const g = originalImage.data[idx + 1];
+      const b = originalImage.data[idx + 2];
+      // Avoid divide-by-zero
+      const r_scale = r !== 0 ? 255 / r : 1;
+      const g_scale = g !== 0 ? 255 / g : 1;
+      const b_scale = b !== 0 ? 255 / b : 1;
+      // Apply scaling
+      const arr = new Uint8ClampedArray(originalImage.data);
+      for (let i = 0; i < arr.length; i += 4) {
+        arr[i] = Math.min(arr[i] * r_scale, 255);
+        arr[i + 1] = Math.min(arr[i + 1] * g_scale, 255);
+        arr[i + 2] = Math.min(arr[i + 2] * b_scale, 255);
+        // Alpha stays the same
+      }
+      correctedImageData = new ImageData(arr, originalImage.width, originalImage.height);
+      outputCanvas.getContext('2d').putImageData(correctedImageData, 0, 0);
+      downloadBtn.disabled = false;
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      if (!correctedImageData) return;
+      const link = document.createElement('a');
+      outputCanvas.toBlob(blob => {
+        link.href = URL.createObjectURL(blob);
+        link.download = 'corrected_image.png';
+        link.click();
+      }, 'image/png');
+    });
+  </script>
+</body>
+</html>
