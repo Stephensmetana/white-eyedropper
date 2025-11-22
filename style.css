@@ -1,0 +1,114 @@
+html, body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f7f9fb;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+h2, p {
+  text-align: center;
+}
+h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 0.5em;
+  font-size: 2.2rem;
+  color: #222;
+  letter-spacing: 0.02em;
+}
+p {
+  margin-bottom: 0.5em;
+}
+.drop-area {
+  width: 480px;
+  height: 260px;
+  background: #fff;
+  border: 2.5px dashed #4a90e2;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #4a90e2;
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin: 2.5rem 0 2rem 0;
+  transition: background 0.2s, border-color 0.2s;
+  cursor: pointer;
+  box-shadow: 0 4px 24px rgba(74,144,226,0.07);
+  position: relative;
+}
+.drop-area.dragover {
+  background: #eaf4ff;
+  border-color: #357ab8;
+  color: #357ab8;
+}
+.canvas-row {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 2.5rem;
+  justify-content: center;
+  align-items: stretch;
+  min-height: 0;
+  margin-bottom: 0;
+}
+.canvas-col {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  min-height: 0;
+  min-width: 0;
+  position: relative;
+  padding: 0;
+}
+.canvas-col canvas {
+  flex: 1 1 auto;
+  border: 1.5px solid #e0e0e0;
+  margin: 0;
+  border-radius: 8px;
+  background: #f9f9f9;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+  cursor: crosshair;
+  width: 100%;
+  max-width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  aspect-ratio: 1 / 1;
+  min-height: 120px;
+}
+#download, #resetBtn {
+  margin-top: 1.2em;
+  padding: 0.7em 2.2em;
+  font-size: 1.1em;
+  background: #4a90e2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(74,144,226,0.08);
+  cursor: pointer;
+  transition: background 0.18s;
+  min-height: 44px;
+  min-width: 180px;
+  align-self: center;
+}
+#download:disabled {
+  background: #b3d1f3;
+  cursor: not-allowed;
+}
+@media (max-width: 900px) {
+  .canvas-row { flex-direction: column; gap: 1.5rem; }
+  .drop-area { width: 98vw; max-width: 98vw; }
+  .canvas-col { min-height: 40vh; }
+  .canvas-col canvas { max-height: 30vh; }
+}

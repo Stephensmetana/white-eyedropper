@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>White Point Auto-Correct (GIMP-style)</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+  <body>
+  <h2>White Eyedropper Re-Color</h2>
+  <p>White eyedropper is a tool used in photo and web editing software to automatically correct a photo's white balance.</p>
+  <div class="canvas-row" style="flex:1 1 auto; min-height:0;">
+    <div class="canvas-col">
+      <label style="margin-bottom:0.5em;">Original Image</label>
+      <div id="dropArea" class="drop-area">
+        <span>Drop image here or click to select</span>
+      </div>
+      <canvas id="inputCanvas" style="display:none;"></canvas>
+    </div>
+    <div class="canvas-col">
+      <label style="margin-bottom:0.5em;">Recolored Image</label>
+      <canvas id="outputCanvas"></canvas>
+      <button id="download" disabled>Download Recolored Image</button>
+    </div>
+  </div>
+  <script type="module">
+    import { setupEyedropper } from './js/eyedropper.js';
+    setupEyedropper();
+  </script>
+</body>
+</html>
